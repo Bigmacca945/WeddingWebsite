@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Laura & Cathan Wedding – 20 February 2027 at the Duke of Marlborough Hotel, Russell, Bay of Islands, New Zealand" />
+  <title>Laura &amp; Cathan | 20 February 2027</title>
+
+  <!-- Google Fonts: Cormorant Garamond (serif headings) + Lato (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13/zuhJoUGCg3pZA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ===================== NAVIGATION ===================== -->
+  <nav id="navbar" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-brand">Laura &amp; Cathan</a>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="#countdown">Countdown</a></li>
+        <li><a href="#details">Details</a></li>
+        <li><a href="#accommodation">Accommodation</a></li>
+        <li><a href="#dress-code">Dress Code</a></li>
+        <li><a href="#travel">Travel</a></li>
+        <li><a href="#rsvp">RSVP</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===================== HERO ===================== -->
+  <section id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content fade-in">
+      <p class="hero-eyebrow">You Are Invited</p>
+      <h1 class="hero-title">Laura &amp; Cathan</h1>
+      <p class="hero-subtitle">We're Getting Married</p>
+      <p class="hero-date">
+        <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+        20 February 2027
+      </p>
+      <a href="#details" class="btn btn-primary">View Details</a>
+    </div>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <i class="fa-solid fa-chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- ===================== COUNTDOWN ===================== -->
+  <section id="countdown" class="section-light">
+    <div class="container fade-in">
+      <p class="section-label">Counting Down To Our Day</p>
+      <h2 class="section-title">The Big Day Is Almost Here</h2>
+      <div class="countdown-grid" role="timer" aria-live="polite" aria-atomic="true" aria-label="Countdown to the wedding">
+        <div class="countdown-block">
+          <span class="countdown-value" id="cd-days">--</span>
+          <span class="countdown-label">Days</span>
+        </div>
+        <div class="countdown-sep" aria-hidden="true">:</div>
+        <div class="countdown-block">
+          <span class="countdown-value" id="cd-hours">--</span>
+          <span class="countdown-label">Hours</span>
+        </div>
+        <div class="countdown-sep" aria-hidden="true">:</div>
+        <div class="countdown-block">
+          <span class="countdown-value" id="cd-minutes">--</span>
+          <span class="countdown-label">Minutes</span>
+        </div>
+        <div class="countdown-sep" aria-hidden="true">:</div>
+        <div class="countdown-block">
+          <span class="countdown-value" id="cd-seconds">--</span>
+          <span class="countdown-label">Seconds</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WEDDING DETAILS ===================== -->
+  <section id="details" class="section-dark">
+    <div class="container fade-in">
+      <p class="section-label light">Wedding Details</p>
+      <h2 class="section-title light">Join Us To Celebrate</h2>
+      <div class="details-grid">
+
+        <div class="detail-card">
+          <div class="detail-icon"><i class="fa-regular fa-calendar-days" aria-hidden="true"></i></div>
+          <h3>Date</h3>
+          <p>Saturday</p>
+          <p class="detail-emphasis">20 February 2027</p>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon"><i class="fa-solid fa-champagne-glasses" aria-hidden="true"></i></div>
+          <h3>Venue</h3>
+          <p>Duke of Marlborough Hotel</p>
+          <p class="detail-emphasis">Russell, Bay of Islands</p>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></div>
+          <h3>Location</h3>
+          <p>Russell</p>
+          <p class="detail-emphasis">Bay of Islands, New Zealand</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ACCOMMODATION ===================== -->
+  <section id="accommodation" class="section-light">
+    <div class="container fade-in">
+      <p class="section-label">Where To Stay</p>
+      <h2 class="section-title">Accommodation</h2>
+
+      <div class="accomm-card">
+        <div class="accomm-icon" aria-hidden="true">
+          <i class="fa-solid fa-hotel"></i>
+        </div>
+        <div class="accomm-body">
+          <h3 class="accomm-hotel">Duke of Marlborough Hotel</h3>
+          <p>
+            Rooms have been reserved at the Duke of Marlborough Hotel.
+          </p>
+          <p>
+            Please call the hotel directly and mention that you are booking for the
+            <strong>Wedding of Laura and Cathan</strong> to receive a
+            <strong>10% discount</strong>.
+          </p>
+          <p>
+            Some guests have been allocated specific rooms. The hotel staff will
+            advise you at the time of booking.
+          </p>
+
+          <!-- Call button placeholder -->
+          <a href="tel:+6494037829" class="btn btn-outline accomm-call">
+            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            Call the Hotel
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DRESS CODE ===================== -->
+  <section id="dress-code" class="section-dark">
+    <div class="container fade-in">
+      <p class="section-label light">What To Wear</p>
+      <h2 class="section-title light">Dress Code</h2>
+
+      <div class="dresscode-grid">
+
+        <div class="dresscode-card">
+          <div class="dresscode-icon" aria-hidden="true">
+            <i class="fa-solid fa-person"></i>
+          </div>
+          <h3>Men</h3>
+          <p class="dresscode-style">Black Tie</p>
+          <p class="dresscode-hint">Tuxedo or black dinner suit with bow tie.</p>
+        </div>
+
+        <div class="dresscode-card">
+          <div class="dresscode-icon" aria-hidden="true">
+            <i class="fa-solid fa-person-dress"></i>
+          </div>
+          <h3>Women</h3>
+          <p class="dresscode-style">Dress</p>
+          <p class="dresscode-hint">Elegant formal or semi-formal attire.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TRAVEL ===================== -->
+  <section id="travel" class="section-light">
+    <div class="container fade-in">
+      <p class="section-label">Getting Here</p>
+      <h2 class="section-title">Travel &amp; Getting Around</h2>
+
+      <div class="travel-grid">
+
+        <div class="travel-card">
+          <div class="travel-icon" aria-hidden="true">
+            <i class="fa-solid fa-ship"></i>
+          </div>
+          <h3>Ferry Information</h3>
+          <p class="travel-coming-soon">Details will be added closer to the wedding.</p>
+        </div>
+
+        <div class="travel-card">
+          <div class="travel-icon" aria-hidden="true">
+            <i class="fa-solid fa-square-parking"></i>
+          </div>
+          <h3>Parking Information</h3>
+          <p class="travel-coming-soon">Details will be added closer to the wedding.</p>
+        </div>
+
+        <div class="travel-card">
+          <div class="travel-icon" aria-hidden="true">
+            <i class="fa-solid fa-map-location-dot"></i>
+          </div>
+          <h3>Local Attractions</h3>
+          <p class="travel-coming-soon">Details will be added closer to the wedding.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RSVP ===================== -->
+  <section id="rsvp" class="section-rsvp">
+    <div class="rsvp-overlay"></div>
+    <div class="container fade-in rsvp-content">
+      <p class="section-label light">We Hope You Can Make It</p>
+      <h2 class="section-title light">RSVP</h2>
+      <p class="rsvp-text">Please RSVP by the requested date.</p>
+      <a href="https://forms.office.com" target="_blank" rel="noopener noreferrer" class="btn btn-gold btn-lg">
+        <i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i>
+        RSVP Now
+      </a>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq" class="section-light">
+    <div class="container fade-in">
+      <p class="section-label">Have Questions?</p>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+
+      <div class="faq-list" role="list">
+
+        <!-- FAQ Item -->
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>Can I bring children?</span>
+            <i class="fa-solid fa-chevron-down faq-icon" aria-hidden="true"></i>
+          </button>
+          <div class="faq-answer" hidden>
+            <p>Please contact us directly to discuss whether children are suitable for your specific circumstances. We love little ones but want to ensure everyone has a wonderful evening.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item -->
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>What time should I arrive?</span>
+            <i class="fa-solid fa-chevron-down faq-icon" aria-hidden="true"></i>
+          </button>
+          <div class="faq-answer" hidden>
+            <p>We recommend arriving at least 15–20 minutes before the ceremony begins so you can find your seat and enjoy the pre-ceremony atmosphere. Further timing details will be updated closer to the date.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item -->
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>What should I wear?</span>
+            <i class="fa-solid fa-chevron-down faq-icon" aria-hidden="true"></i>
+          </button>
+          <div class="faq-answer" hidden>
+            <p>The dress code is <strong>Black Tie</strong> for men (tuxedo or black dinner suit with bow tie) and an elegant <strong>Dress</strong> for women. Please visit the Dress Code section above for full details.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item -->
+        <div class="faq-item" role="listitem">
+          <button class="faq-question" aria-expanded="false">
+            <span>Where can I stay?</span>
+            <i class="fa-solid fa-chevron-down faq-icon" aria-hidden="true"></i>
+          </button>
+          <div class="faq-answer" hidden>
+            <p>Rooms have been reserved at the Duke of Marlborough Hotel. Call the hotel and mention the <strong>Wedding of Laura and Cathan</strong> for a <strong>10% discount</strong>. Please see the Accommodation section for more details.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer id="footer">
+    <div class="container footer-inner">
+      <p class="footer-names">Laura &amp; Cathan</p>
+      <p class="footer-date">20 February 2027</p>
+      <p class="footer-venue">Duke of Marlborough Hotel, Russell</p>
+      <p class="footer-copy">&copy; 2027 Laura &amp; Cathan. Made with <i class="fa-solid fa-heart" aria-hidden="true"></i> in New Zealand.</p>
+    </div>
+  </footer>
+
+  <!-- ===================== BACK TO TOP ===================== -->
+  <button id="back-to-top" aria-label="Back to top" title="Back to top">
+    <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+  </button>
+
+  <script src="script.js"></script>
+</body>
+</html>
