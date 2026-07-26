@@ -1,0 +1,228 @@
+/**
+ * script.js  –  Laura & Cathan Wedding Website
+ * Features:
+ *  - Sticky / scroll-aware navigation with active section highlighting
+ *  - Mobile hamburger menu toggle
+ *  - Live countdown timer (target: 20 February 2027 NZT)
+ *  - Scroll fade-in animations via IntersectionObserver
+ *  - FAQ accordion
+ *  - Back-to-top button
+ */
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+
+/**
+ * Pad a number to at least two digits.
+ * @param {number} n
+ * @returns {string}
+ */
+function pad(n) {
+  return String(n).padStart(2, '0');
+}
+
+/* ============================================================
+   NAVIGATION – Sticky + active section highlight
+   ============================================================ */
+(function initNav() {
+  const navbar   = document.getElementById('navbar');
+  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  const sections = Array.from(document.querySelectorAll('section[id], footer[id]'));
+
+  /** Apply/remove the scrolled class for the nav background */
+  function onScroll() {
+    if (window.scrollY > 60) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+
+    updateActiveLink();
+    toggleBackToTop();
+  }
+
+  /** Highlight the nav link whose section is most in view */
+  function updateActiveLink() {
+    let currentId = '';
+    const offset = 90; // navbar height + buffer
+
+    sections.forEach(section => {
+      const top = section.getBoundingClientRect().top;
+      if (top <= offset) {
+        currentId = section.id;
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === `#${currentId}`) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll(); // run once on load
+}());
+
+/* ============================================================
+   HAMBURGER MENU
+   ============================================================ */
+(function initHamburger() {
+  const hamburger  = document.getElementById('hamburger');
+  const navLinksEl = document.getElementById('nav-links');
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = hamburger.classList.toggle('open');
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    navLinksEl.classList.toggle('open', isOpen);
+    // Prevent body scroll when menu is open
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  // Close menu when a link is clicked
+  navLinksEl.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      navLinksEl.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && hamburger.classList.contains('open')) {
+      hamburger.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      navLinksEl.classList.remove('open');
+      document.body.style.overflow = '';
+      hamburger.focus();
+    }
+  });
+}());
+
+/* ============================================================
+   COUNTDOWN TIMER
+   Target: 20 February 2027 12:00:00 NZDT (UTC+13)
+   ============================================================ */
+(function initCountdown() {
+  // Wedding date in NZ Daylight Time (UTC+13 in February)
+  const WEDDING_DATE = new Date('2027-02-20T12:00:00+13:00');
+
+  const daysEl    = document.getElementById('cd-days');
+  const hoursEl   = document.getElementById('cd-hours');
+  const minutesEl = document.getElementById('cd-minutes');
+  const secondsEl = document.getElementById('cd-seconds');
+
+  function tick() {
+    const now  = new Date();
+    const diff = WEDDING_DATE - now;
+
+    if (diff <= 0) {
+      // Wedding day has arrived!
+      daysEl.textContent    = '00';
+      hoursEl.textContent   = '00';
+      minutesEl.textContent = '00';
+      secondsEl.textContent = '00';
+      return;
+    }
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const days         = Math.floor(totalSeconds / 86400);
+    const hours        = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes      = Math.floor((totalSeconds % 3600) / 60);
+    const seconds      = totalSeconds % 60;
+
+    daysEl.textContent    = pad(days);
+    hoursEl.textContent   = pad(hours);
+    minutesEl.textContent = pad(minutes);
+    secondsEl.textContent = pad(seconds);
+  }
+
+  tick(); // immediate first render
+  setInterval(tick, 1000);
+}());
+
+/* ============================================================
+   SCROLL FADE-IN  (IntersectionObserver)
+   ============================================================ */
+(function initFadeIn() {
+  // Add 'visible' class when elements enter the viewport
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target); // animate once only
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+
+  document.querySelectorAll('.fade-in').forEach(el => {
+    // Only observe if the element is NOT already in the viewport on page load
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+      el.classList.add('visible'); // already visible – show immediately
+    } else {
+      observer.observe(el);
+    }
+  });
+}());
+
+/* ============================================================
+   FAQ ACCORDION
+   ============================================================ */
+(function initFaq() {
+  const faqItems = document.querySelectorAll('.faq-item');
+
+  faqItems.forEach(item => {
+    const btn    = item.querySelector('.faq-question');
+    const answer = item.querySelector('.faq-answer');
+
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+      // Close all other open items
+      faqItems.forEach(other => {
+        const otherBtn    = other.querySelector('.faq-question');
+        const otherAnswer = other.querySelector('.faq-answer');
+        otherBtn.setAttribute('aria-expanded', 'false');
+        otherAnswer.hidden = true;
+      });
+
+      // Toggle current
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        answer.hidden = false;
+      }
+    });
+  });
+}());
+
+/* ============================================================
+   BACK TO TOP BUTTON
+   ============================================================ */
+(function initBackToTop() {
+  const btn = document.getElementById('back-to-top');
+
+  function toggleBackToTop() {
+    btn.classList.toggle('visible', window.scrollY > 400);
+  }
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Exposed as a named function so the scroll handler can call it
+  window.toggleBackToTop = toggleBackToTop;
+}());
+
+/**
+ * toggleBackToTop is called from the scroll event added in initNav.
+ * The window property is set in initBackToTop above; the reference is safe
+ * because initNav's onScroll runs after the DOM is ready.
+ */
