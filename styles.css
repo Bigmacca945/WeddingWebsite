@@ -51,6 +51,10 @@ body {
   overflow-x: hidden;
 }
 
+.invite-locked body {
+  overflow: hidden;
+}
+
 img {
   max-width: 100%;
   display: block;
@@ -63,6 +67,104 @@ a {
 
 ul {
   list-style: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================
+   INVITE GATE
+   ============================================================ */
+.invite-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(155deg, rgba(26, 39, 68, 0.96), rgba(13, 13, 13, 0.94));
+  padding: 1.1rem;
+}
+
+.invite-locked .invite-gate {
+  display: flex;
+}
+
+.invite-card {
+  width: min(460px, 100%);
+  background: var(--white);
+  border-radius: var(--radius);
+  border-top: 5px solid var(--champagne);
+  box-shadow: var(--shadow);
+  padding: 2rem 1.3rem;
+  text-align: center;
+}
+
+.invite-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--champagne);
+  margin-bottom: 0.45rem;
+}
+
+.invite-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.9rem, 6vw, 2.7rem);
+  font-weight: 300;
+  color: var(--navy);
+  margin-bottom: 0.45rem;
+  line-height: 1.12;
+}
+
+.invite-help {
+  color: var(--grey);
+  font-size: 0.95rem;
+  margin-bottom: 1.2rem;
+}
+
+.invite-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.invite-input {
+  width: 100%;
+  border: 1px solid rgba(26, 39, 68, 0.2);
+  border-radius: var(--radius);
+  padding: 0.85rem 0.9rem;
+  font-size: 1rem;
+  font-family: var(--font-body);
+  color: var(--navy);
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+.invite-input:focus-visible {
+  outline: 3px solid var(--champagne);
+  outline-offset: 2px;
+}
+
+.invite-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.invite-error {
+  margin-top: 0.75rem;
+  font-size: 0.88rem;
+  color: #a33434;
+  font-weight: 700;
 }
 
 /* ── Containers ─────────────────────────────────────────────── */

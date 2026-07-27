@@ -13,6 +13,51 @@
 document.documentElement.classList.add('js-enabled');
 
 /* ============================================================
+   INVITE CODE GATE
+   ============================================================ */
+(function initInviteGate() {
+  const ACCESS_CODE = '04151912';
+  const STORAGE_KEY = 'weddingInviteUnlocked';
+
+  const html = document.documentElement;
+  const gate = document.getElementById('invite-gate');
+  const form = document.getElementById('invite-form');
+  const input = document.getElementById('invite-code');
+  const error = document.getElementById('invite-error');
+
+  if (!gate || !form || !input || !error) {
+    return;
+  }
+
+  const isUnlocked = localStorage.getItem(STORAGE_KEY) === 'true';
+  if (isUnlocked) {
+    html.classList.remove('invite-locked');
+    gate.setAttribute('hidden', '');
+    return;
+  }
+
+  html.classList.add('invite-locked');
+  input.focus();
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    const enteredCode = input.value.trim();
+
+    if (enteredCode === ACCESS_CODE) {
+      localStorage.setItem(STORAGE_KEY, 'true');
+      html.classList.remove('invite-locked');
+      gate.setAttribute('hidden', '');
+      error.hidden = true;
+      input.value = '';
+      return;
+    }
+
+    error.hidden = false;
+    input.select();
+  });
+}());
+
+/* ============================================================
    UTILITY
    ============================================================ */
 

@@ -14,9 +14,45 @@
   <!-- Font Awesome icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <link rel="stylesheet" href="styles.css?v=20260727-1" />
+  <link rel="stylesheet" href="styles.css?v=20260727-2" />
+
+  <script>
+    // Keep site hidden until invite-code state is checked.
+    (function () {
+      var isUnlocked = localStorage.getItem('weddingInviteUnlocked') === 'true';
+      if (!isUnlocked) {
+        document.documentElement.classList.add('invite-locked');
+      }
+    }());
+  </script>
 </head>
 <body>
+
+  <!-- ===================== INVITE CODE GATE ===================== -->
+  <div id="invite-gate" class="invite-gate" role="dialog" aria-modal="true" aria-labelledby="invite-title">
+    <div class="invite-card">
+      <p class="invite-label">Private Wedding Website</p>
+      <h1 id="invite-title" class="invite-title">Enter Invite Code</h1>
+      <p class="invite-help">Please enter your invite code to view our wedding details.</p>
+
+      <form id="invite-form" class="invite-form" novalidate>
+        <label for="invite-code" class="sr-only">Invite code</label>
+        <input
+          id="invite-code"
+          name="invite-code"
+          type="password"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="Invite code"
+          class="invite-input"
+          required
+        />
+        <button type="submit" class="btn btn-primary invite-btn">Enter Website</button>
+      </form>
+
+      <p id="invite-error" class="invite-error" role="alert" hidden>That code is not correct. Please try again.</p>
+    </div>
+  </div>
 
   <!-- ===================== NAVIGATION ===================== -->
   <nav id="navbar" aria-label="Main navigation">
@@ -429,6 +465,6 @@
     <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
   </button>
 
-  <script src="script.js?v=20260727-1"></script>
+  <script src="script.js?v=20260727-2"></script>
 </body>
 </html>
