@@ -9,6 +9,9 @@
  *  - Back-to-top button
  */
 
+// Enable progressive enhancement hooks for JS-only visual effects.
+document.documentElement.classList.add('js-enabled');
+
 /* ============================================================
    UTILITY
    ============================================================ */
@@ -39,7 +42,9 @@ function pad(n) {
     }
 
     updateActiveLink();
-    toggleBackToTop();
+    if (typeof window.toggleBackToTop === 'function') {
+      window.toggleBackToTop();
+    }
   }
 
   /** Highlight the nav link whose section is most in view */
@@ -149,6 +154,17 @@ function pad(n) {
    SCROLL FADE-IN  (IntersectionObserver)
    ============================================================ */
 (function initFadeIn() {
+  const root = document.documentElement;
+  const fadeEls = document.querySelectorAll('.fade-in');
+
+  // Fallback for older mobile browsers: keep content visible.
+  if (typeof window.IntersectionObserver !== 'function') {
+    fadeEls.forEach(el => el.classList.add('visible'));
+    return;
+  }
+
+  root.classList.add('fade-init');
+
   // Add 'visible' class when elements enter the viewport
   const observer = new IntersectionObserver(
     entries => {
@@ -162,7 +178,7 @@ function pad(n) {
     { threshold: 0.12 }
   );
 
-  document.querySelectorAll('.fade-in').forEach(el => {
+  fadeEls.forEach(el => {
     // Only observe if the element is NOT already in the viewport on page load
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight) {
@@ -206,20 +222,17 @@ function pad(n) {
 /* ============================================================
    BACK TO TOP BUTTON
    ============================================================ */
-(function initBackToTop() {
-  const btn = document.getElementById('back-to-top');
+function toggleBackToTop() {
+    const button = document.getElementById("back-to-top");
 
-  function toggleBackToTop() {
-    btn.classList.toggle('visible', window.scrollY > 400);
-  }
+    if (!button) return;
 
-  btn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-
-  // Exposed as a named function so the scroll handler can call it
-  window.toggleBackToTop = toggleBackToTop;
-}());
+    if (window.scrollY > 300) {
+        button.style.display = "block";
+    } else {
+        button.style.display = "none";
+    }
+}
 
 /**
  * toggleBackToTop is called from the scroll event added in initNav.

@@ -12,9 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
 
   <!-- Font Awesome icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13/zuhJoUGCg3pZA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20260727-1" />
 </head>
 <body>
 
@@ -44,7 +44,7 @@
   <!-- ===================== HERO ===================== -->
   <section id="hero">
     <div class="hero-overlay"></div>
-    <div class="hero-content fade-in">
+    <div class="hero-content">
       <p class="hero-eyebrow">You Are Invited</p>
       <h1 class="hero-title">Laura &amp; Cathan</h1>
       <p class="hero-subtitle">We're Getting Married</p>
@@ -61,7 +61,7 @@
 
   <!-- ===================== COUNTDOWN ===================== -->
   <section id="countdown" class="section-light">
-    <div class="container fade-in">
+    <div class="container">
       <p class="section-label">Counting Down To Our Day</p>
       <h2 class="section-title">The Big Day Is Almost Here</h2>
       <div class="countdown-grid" role="timer" aria-live="polite" aria-atomic="true" aria-label="Countdown to the wedding">
@@ -90,7 +90,7 @@
 
   <!-- ===================== WEDDING DETAILS ===================== -->
   <section id="details" class="section-dark">
-    <div class="container fade-in">
+    <div class="container">
       <p class="section-label light">Wedding Details</p>
       <h2 class="section-title light">Join Us To Celebrate</h2>
       <div class="details-grid">
@@ -120,9 +120,132 @@
     </div>
   </section>
 
+  <!-- ===================== WEDDING SCHEDULE ===================== -->
+  <section id="schedule" class="section-light">
+    <div class="container">
+      <p class="section-label">Wedding Day Timeline</p>
+      <h2 class="section-title">Wedding Schedule</h2>
+
+      <div class="schedule-timeline" role="list" aria-label="Wedding day schedule">
+
+        <div class="schedule-item" role="listitem">
+          <div class="schedule-time">2:30 PM</div>
+          <div class="schedule-dot" aria-hidden="true"></div>
+          <div class="schedule-content">
+            <h3>Guest Arrival</h3>
+            <p>Welcome drinks and guest arrival.</p>
+          </div>
+        </div>
+
+        <div class="schedule-item" role="listitem">
+          <div class="schedule-time">3:00 PM</div>
+          <div class="schedule-dot" aria-hidden="true"></div>
+          <div class="schedule-content">
+            <h3>Ceremony</h3>
+            <p>The wedding ceremony begins.</p>
+          </div>
+        </div>
+
+        <div class="schedule-item" role="listitem">
+          <div class="schedule-time">4:00 PM</div>
+          <div class="schedule-dot" aria-hidden="true"></div>
+          <div class="schedule-content">
+            <h3>Drinks &amp; Canapes</h3>
+            <p>Celebrate with drinks and canapes.</p>
+          </div>
+        </div>
+
+        <div class="schedule-item" role="listitem">
+          <div class="schedule-time">6:00 PM</div>
+          <div class="schedule-dot" aria-hidden="true"></div>
+          <div class="schedule-content">
+            <h3>Reception</h3>
+            <p>Dinner reception and speeches.</p>
+          </div>
+        </div>
+
+        <div class="schedule-item" role="listitem">
+          <div class="schedule-time">8:30 PM</div>
+          <div class="schedule-dot" aria-hidden="true"></div>
+          <div class="schedule-content">
+            <h3>First Dance</h3>
+            <p>Our first dance as a married couple.</p>
+          </div>
+        </div>
+
+        <div class="schedule-item" role="listitem">
+          <div class="schedule-time">9:00 PM</div>
+          <div class="schedule-dot" aria-hidden="true"></div>
+          <div class="schedule-content">
+            <h3>Dancing &amp; Celebration</h3>
+            <p>Dance floor open and celebration continues.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VENUE ===================== -->
+  <section id="venue" class="section-light">
+    <div class="container">
+      <p class="section-label">Venue Information</p>
+      <h2 class="section-title">Duke of Marlborough Hotel</h2>
+
+      <div class="venue-card">
+        <div class="venue-icon" aria-hidden="true">
+          <i class="fa-solid fa-hotel"></i>
+        </div>
+
+        <div class="venue-content">
+          <h3 class="venue-name">Duke of Marlborough Hotel</h3>
+
+          <address class="venue-address">
+            35 The Strand<br />
+            Russell<br />
+            Bay of Islands<br />
+            New Zealand
+          </address>
+
+          <div class="venue-contact-list">
+            <p>
+              <span class="venue-contact-label">Phone:</span>
+              <a href="tel:+6494037829" class="venue-contact-link">+64 9 403 7829</a>
+            </p>
+            <p>
+              <span class="venue-contact-label">Email:</span>
+              <a href="mailto:info@theduke.co.nz" class="venue-contact-link">info@theduke.co.nz</a>
+            </p>
+          </div>
+
+          <div class="venue-actions">
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Duke+of+Marlborough+Hotel+35+The+Strand+Russell+Bay+of+Islands+New+Zealand"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline"
+            >
+              <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+              Open in Google Maps
+            </a>
+            <a
+              href="https://www.theduke.co.nz"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-primary"
+            >
+              <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+              Visit Hotel Website
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== ACCOMMODATION ===================== -->
   <section id="accommodation" class="section-light">
-    <div class="container fade-in">
+    <div class="container">
       <p class="section-label">Where To Stay</p>
       <h2 class="section-title">Accommodation</h2>
 
@@ -157,7 +280,7 @@
 
   <!-- ===================== DRESS CODE ===================== -->
   <section id="dress-code" class="section-dark">
-    <div class="container fade-in">
+    <div class="container">
       <p class="section-label light">What To Wear</p>
       <h2 class="section-title light">Dress Code</h2>
 
@@ -187,7 +310,7 @@
 
   <!-- ===================== TRAVEL ===================== -->
   <section id="travel" class="section-light">
-    <div class="container fade-in">
+    <div class="container">
       <p class="section-label">Getting Here</p>
       <h2 class="section-title">Travel &amp; Getting Around</h2>
 
@@ -224,7 +347,7 @@
   <!-- ===================== RSVP ===================== -->
   <section id="rsvp" class="section-rsvp">
     <div class="rsvp-overlay"></div>
-    <div class="container fade-in rsvp-content">
+    <div class="container rsvp-content">
       <p class="section-label light">We Hope You Can Make It</p>
       <h2 class="section-title light">RSVP</h2>
       <p class="rsvp-text">Please RSVP by the requested date.</p>
@@ -237,7 +360,7 @@
 
   <!-- ===================== FAQ ===================== -->
   <section id="faq" class="section-light">
-    <div class="container fade-in">
+    <div class="container">
       <p class="section-label">Have Questions?</p>
       <h2 class="section-title">Frequently Asked Questions</h2>
 
@@ -306,6 +429,6 @@
     <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
   </button>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=20260727-1"></script>
 </body>
 </html>

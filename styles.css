@@ -171,12 +171,17 @@ ul {
 
 /* ── Scroll Fade-In Animation ───────────────────────────────── */
 .fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.js-enabled.fade-init .fade-in {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 
-.fade-in.visible {
+.js-enabled.fade-init .fade-in.visible {
   opacity: 1;
   transform: translateY(0);
 }
@@ -506,6 +511,160 @@ ul {
   color: var(--white) !important;
   font-weight: 400 !important;
   font-size: 1.05rem !important;
+}
+
+/* ============================================================
+   WEDDING SCHEDULE
+   ============================================================ */
+#schedule {
+  text-align: left;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f5ef 100%);
+}
+
+#schedule .section-title,
+#schedule .section-label {
+  text-align: center;
+}
+
+.schedule-timeline {
+  max-width: 820px;
+  margin-inline: auto;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.schedule-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  left: 8.4rem;
+  width: 2px;
+  background: linear-gradient(var(--champagne), rgba(201, 169, 110, 0.2));
+}
+
+.schedule-item {
+  display: grid;
+  grid-template-columns: 6.8rem 1.2rem 1fr;
+  align-items: start;
+  gap: 1.2rem;
+  position: relative;
+  padding: 0.35rem 0 1.3rem;
+}
+
+.schedule-time {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--navy);
+  text-align: right;
+  padding-top: 0.2rem;
+}
+
+.schedule-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--champagne);
+  box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.22);
+  margin-top: 0.55rem;
+}
+
+.schedule-content {
+  background: var(--white);
+  border: 1px solid rgba(26, 39, 68, 0.12);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 1rem 1.1rem;
+}
+
+.schedule-content h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--navy);
+  margin-bottom: 0.2rem;
+}
+
+.schedule-content p {
+  color: var(--grey);
+  font-size: 0.92rem;
+}
+
+/* ============================================================
+   VENUE
+   ============================================================ */
+#venue {
+  text-align: left;
+}
+
+#venue .section-title,
+#venue .section-label {
+  text-align: center;
+}
+
+.venue-card {
+  display: flex;
+  gap: 2rem;
+  background: var(--grey-lt);
+  border-radius: var(--radius);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow-card);
+  border-left: 5px solid var(--champagne);
+  align-items: flex-start;
+}
+
+.venue-icon {
+  font-size: 2.5rem;
+  color: var(--champagne);
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.venue-name {
+  font-family: var(--font-heading);
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: var(--navy);
+  margin-bottom: 0.8rem;
+}
+
+.venue-address {
+  font-style: normal;
+  color: var(--grey);
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+
+.venue-contact-list p {
+  color: var(--grey);
+  margin-bottom: 0.35rem;
+}
+
+.venue-contact-label {
+  color: var(--navy);
+  font-weight: 700;
+  margin-right: 0.25rem;
+}
+
+.venue-contact-link {
+  color: var(--navy);
+  border-bottom: 1px solid rgba(26, 39, 68, 0.25);
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.venue-contact-link:hover {
+  color: var(--champagne);
+  border-color: var(--champagne);
+}
+
+.venue-actions {
+  margin-top: 1.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
 }
 
 /* ============================================================
@@ -862,6 +1021,14 @@ ul {
    RESPONSIVE – Tablet & Mobile
    ============================================================ */
 @media (max-width: 900px) {
+  /* Keep content visible on mobile to avoid fade-in race conditions */
+  .js-enabled.fade-init .fade-in,
+  .js-enabled.fade-init .fade-in.visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
   /* Mobile nav */
   .hamburger {
     display: flex;
@@ -871,21 +1038,16 @@ ul {
     position: fixed;
     inset: 0;
     background: rgba(13, 13, 13, 0.97);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition);
+    display: none;
     z-index: 1050;
   }
 
   .nav-links.open {
-    opacity: 1;
-    pointer-events: auto;
+    display: flex;
   }
 
   .nav-links a {
@@ -907,6 +1069,51 @@ ul {
     padding: 4rem 0;
   }
 
+  .schedule-timeline {
+    padding-left: 0;
+  }
+
+  .schedule-timeline::before {
+    left: 0.33rem;
+    top: 0.8rem;
+  }
+
+  .schedule-item {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+    padding-left: 1.5rem;
+  }
+
+  .schedule-time {
+    text-align: left;
+    padding-top: 0;
+  }
+
+  .schedule-dot {
+    position: absolute;
+    left: 0;
+    top: 2.1rem;
+    margin-top: 0;
+  }
+
+  .venue-card {
+    flex-direction: column;
+    padding: 2rem 1.2rem;
+  }
+
+  .venue-name {
+    font-size: 1.45rem;
+  }
+
+  .venue-actions {
+    width: 100%;
+  }
+
+  .venue-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .accomm-card {
     flex-direction: column;
   }
@@ -922,4 +1129,13 @@ ul {
   .countdown-value {
     font-size: clamp(1.8rem, 10vw, 3rem);
   }
+}
+
+/* Global safety override: keep text visible on all browsers/devices. */
+.fade-in,
+.js-enabled.fade-init .fade-in,
+.js-enabled.fade-init .fade-in.visible {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
 }
