@@ -5,7 +5,6 @@
  *  - Mobile hamburger menu toggle
  *  - Live countdown timer (target: 20 February 2027 NZT)
  *  - Scroll fade-in animations via IntersectionObserver
- *  - FAQ accordion
  *  - Back-to-top button
  */
 
@@ -231,36 +230,6 @@ function pad(n) {
     } else {
       observer.observe(el);
     }
-  });
-}());
-
-/* ============================================================
-   FAQ ACCORDION
-   ============================================================ */
-(function initFaq() {
-  const faqItems = document.querySelectorAll('.faq-item');
-
-  faqItems.forEach(item => {
-    const btn    = item.querySelector('.faq-question');
-    const answer = item.querySelector('.faq-answer');
-
-    btn.addEventListener('click', () => {
-      const isOpen = btn.getAttribute('aria-expanded') === 'true';
-
-      // Close all other open items
-      faqItems.forEach(other => {
-        const otherBtn    = other.querySelector('.faq-question');
-        const otherAnswer = other.querySelector('.faq-answer');
-        otherBtn.setAttribute('aria-expanded', 'false');
-        otherAnswer.hidden = true;
-      });
-
-      // Toggle current
-      if (!isOpen) {
-        btn.setAttribute('aria-expanded', 'true');
-        answer.hidden = false;
-      }
-    });
   });
 }());
 

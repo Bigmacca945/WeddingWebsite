@@ -414,7 +414,7 @@ ul {
   overflow: hidden;
 
   /* High-quality coastal NZ hero placeholder via Picsum */
-  background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80');
+  background-image: url('https://www.theduke.co.nz/wp-content/uploads/2025/12/DoM_JuneMenu-2.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -963,80 +963,6 @@ ul {
   font-size: 1.05rem;
   margin-bottom: 2.2rem;
   letter-spacing: 0.05em;
-}
-
-/* ============================================================
-   FAQ
-   ============================================================ */
-#faq {
-  text-align: center;
-}
-
-.faq-list {
-  max-width: 760px;
-  margin-inline: auto;
-  text-align: left;
-}
-
-.faq-item {
-  border-bottom: 1px solid rgba(26, 39, 68, 0.15);
-}
-
-.faq-item:first-child {
-  border-top: 1px solid rgba(26, 39, 68, 0.15);
-}
-
-.faq-question {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.4rem 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: var(--font-heading);
-  font-size: 1.2rem;
-  font-weight: 400;
-  color: var(--navy);
-  text-align: left;
-  transition: color var(--transition);
-}
-
-.faq-question:hover {
-  color: var(--champagne);
-}
-
-.faq-question:focus-visible {
-  outline: 2px solid var(--champagne);
-  outline-offset: 2px;
-  border-radius: var(--radius);
-}
-
-.faq-icon {
-  flex-shrink: 0;
-  color: var(--champagne);
-  font-size: 0.9rem;
-  transition: transform var(--transition);
-}
-
-.faq-question[aria-expanded="true"] .faq-icon {
-  transform: rotate(180deg);
-}
-
-.faq-answer {
-  padding: 0 0 1.4rem;
-}
-
-.faq-answer[hidden] {
-  display: none;
-}
-
-.faq-answer p {
-  font-size: 0.97rem;
-  color: var(--grey);
-  line-height: 1.75;
 }
 
 /* ============================================================
