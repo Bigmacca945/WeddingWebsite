@@ -966,6 +966,42 @@ ul {
 }
 
 /* ============================================================
+   WEDDING PLAYLIST
+   ============================================================ */
+#playlist {
+  text-align: center;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f5ef 100%);
+}
+
+.playlist-card {
+  max-width: 900px;
+  margin-inline: auto;
+  background: var(--white);
+  border: 1px solid rgba(26, 39, 68, 0.12);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+}
+
+.playlist-intro {
+  color: var(--grey);
+  font-size: 0.96rem;
+  margin-bottom: 1.1rem;
+}
+
+.playlist-embed {
+  width: 100%;
+  min-height: 352px;
+  border: 0;
+  border-radius: 12px;
+  display: block;
+}
+
+.playlist-link {
+  margin-top: 1.1rem;
+}
+
+/* ============================================================
    FOOTER
    ============================================================ */
 #footer {
@@ -1156,6 +1192,19 @@ ul {
 
   .countdown-value {
     font-size: clamp(1.8rem, 10vw, 3rem);
+  }
+
+  .playlist-card {
+    padding: 1rem;
+  }
+
+  .playlist-embed {
+    min-height: 420px;
+  }
+
+  .playlist-link {
+    width: 100%;
+    justify-content: center;
   }
 }
 
