@@ -371,21 +371,14 @@ function toggleBackToTop() {
     formError.hidden = true;
 
     try {
-      const endpoint = form.action;
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      });
 
-      // Demo locally until YOUR_FORM_ID in rsvp.html is replaced with a Formspree form ID.
-      if (endpoint.includes('YOUR_FORM_ID')) {
-        await new Promise(resolve => setTimeout(resolve, 800));
-      } else {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          body: new FormData(form),
-          headers: { Accept: 'application/json' }
-        });
-
-        if (!response.ok) {
-          throw new Error('Form submission failed');
-        }
+      if (!response.ok) {
+        throw new Error('Form submission failed');
       }
 
       form.hidden = true;
