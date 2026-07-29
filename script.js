@@ -165,6 +165,10 @@ function pad(n) {
   const minutesEl = document.getElementById('cd-minutes');
   const secondsEl = document.getElementById('cd-seconds');
 
+  if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
+    return;
+  }
+
   function tick() {
     const now  = new Date();
     const diff = WEDDING_DATE - now;
@@ -253,3 +257,151 @@ function toggleBackToTop() {
  * The window property is set in initBackToTop above; the reference is safe
  * because initNav's onScroll runs after the DOM is ready.
  */
+
+/* ============================================================
+   RSVP FORM
+   ============================================================ */
+(function initRsvpForm() {
+  const form = document.getElementById('rsvp-form');
+
+  if (!form) {
+    return;
+  }
+
+  const submitButton = document.getElementById('rsvp-submit');
+  const submitLabel = submitButton.querySelector('.submit-label');
+  const submitLoading = submitButton.querySelector('.submit-loading');
+  const successMessage = document.getElementById('rsvp-success');
+  const formError = document.getElementById('form-error');
+  const guestNamesField = document.getElementById('guest-names-field');
+  const guestNames = document.getElementById('guest-names');
+  const attendanceInputs = form.querySelectorAll('input[name="attendance"]');
+
+  function getAttendance() {
+    return form.querySelector('input[name="attendance"]:checked')?.value || '';
+  }
+
+  function setFieldError(field, message) {
+    const errorId = field.getAttribute('aria-describedby')?.split(' ').find(id => id.endsWith('-error'));
+    const error = errorId ? document.getElementById(errorId) : null;
+    field.classList.toggle('is-invalid', Boolean(message));
+    field.setAttribute('aria-invalid', String(Boolean(message)));
+
+    if (error) {
+      error.textContent = message;
+    }
+  }
+
+  function validateField(field) {
+    let message = '';
+
+    if (field.required && !field.value.trim()) {
+      message = 'Please complete this required field.';
+    }
+
+    setFieldError(field, message);
+    return !message;
+  }
+
+  function validateAttendance(showError) {
+    const isValid = Boolean(getAttendance());
+    const error = document.getElementById('attendance-error');
+
+    attendanceInputs.forEach(input => input.setAttribute('aria-invalid', String(!isValid)));
+    if (showError) {
+      error.textContent = isValid ? '' : 'Please let us know if you will be attending.';
+    }
+
+    return isValid;
+  }
+
+  function updateGuestNames() {
+    const isAttending = getAttendance() === 'Joyfully Accepts';
+    guestNamesField.hidden = !isAttending;
+    guestNames.required = isAttending;
+
+    if (!isAttending) {
+      guestNames.value = '';
+      setFieldError(guestNames, '');
+    }
+  }
+
+  function isFormComplete() {
+    const requiredFields = Array.from(form.querySelectorAll('input[required]:not([type="radio"]), select[required], textarea[required]'));
+    return validateAttendance(false) && requiredFields.every(field => field.value.trim());
+  }
+
+  function updateSubmitState() {
+    submitButton.disabled = !isFormComplete();
+  }
+
+  form.querySelectorAll('input, select, textarea').forEach(field => {
+    field.addEventListener('input', updateSubmitState);
+    field.addEventListener('change', updateSubmitState);
+
+    if (field.required && field.type !== 'radio') {
+      field.addEventListener('blur', () => validateField(field));
+    }
+  });
+
+  attendanceInputs.forEach(input => {
+    input.addEventListener('change', () => {
+      updateGuestNames();
+      validateAttendance(true);
+      updateSubmitState();
+    });
+  });
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const requiredFields = Array.from(form.querySelectorAll('input[required]:not([type="radio"]), select[required], textarea[required]'));
+    const fieldsAreValid = requiredFields.every(field => validateField(field));
+    const attendanceIsValid = validateAttendance(true);
+
+    if (!fieldsAreValid || !attendanceIsValid) {
+      form.querySelector('[aria-invalid="true"]')?.focus();
+      updateSubmitState();
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitLabel.hidden = true;
+    submitLoading.hidden = false;
+    form.setAttribute('aria-busy', 'true');
+    formError.hidden = true;
+
+    try {
+      const endpoint = form.action;
+
+      // Demo locally until YOUR_FORM_ID in rsvp.html is replaced with a Formspree form ID.
+      if (endpoint.includes('YOUR_FORM_ID')) {
+        await new Promise(resolve => setTimeout(resolve, 800));
+      } else {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' }
+        });
+
+        if (!response.ok) {
+          throw new Error('Form submission failed');
+        }
+      }
+
+      form.hidden = true;
+      successMessage.hidden = false;
+      successMessage.focus();
+    } catch (error) {
+      formError.textContent = 'We could not send your RSVP. Please check your connection and try again.';
+      formError.hidden = false;
+      submitButton.disabled = false;
+    } finally {
+      form.removeAttribute('aria-busy');
+      submitLabel.hidden = false;
+      submitLoading.hidden = true;
+    }
+  });
+
+  updateGuestNames();
+  updateSubmitState();
+}());

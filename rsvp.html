@@ -1,28 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RSVP | Laura & Cathan</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="RSVP for Laura and Cathan's wedding on 20 February 2027 at the Duke of Marlborough Hotel in Russell." />
+    <title>Wedding RSVP | Laura &amp; Cathan</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=Lato:wght@300;400;700&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="styles.css?v=20260729-1" />
 </head>
+<body class="rsvp-page">
+    <nav id="navbar" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="index.html#hero" class="nav-brand">Laura &amp; Cathan</a>
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="nav-links" role="list">
+                <li><a href="index.html#hero">Home</a></li>
+                <li><a href="index.html#countdown">Countdown</a></li>
+                <li><a href="index.html#details">Details</a></li>
+                <li><a href="index.html#accommodation">Accommodation</a></li>
+                <li><a href="index.html#dress-code">Dress Code</a></li>
+                <li><a href="index.html#travel">Travel</a></li>
+                <li><a href="rsvp.html" class="active" aria-current="page">RSVP</a></li>
+                <li><a href="index.html#faq">FAQ</a></li>
+            </ul>
+        </div>
+    </nav>
 
-<body>
+    <main>
+        <section id="rsvp-hero" class="rsvp-hero">
+            <div class="hero-overlay"></div>
+            <div class="rsvp-hero-content">
+                <p class="hero-eyebrow">Laura &amp; Cathan</p>
+                <h1>Wedding RSVP</h1>
+                <div class="rsvp-hero-divider" aria-hidden="true"><span></span><i class="fa-regular fa-heart"></i><span></span></div>
+                <p class="rsvp-hero-date">20 February 2027</p>
+                <p class="rsvp-hero-venue">Duke of Marlborough Hotel<br />Russell, Bay of Islands</p>
+            </div>
+        </section>
 
-<section class="section-light">
-    <div class="container">
+        <section class="rsvp-form-section section-light" aria-labelledby="rsvp-form-title">
+            <div class="container rsvp-form-wrap fade-in">
+                <header class="rsvp-intro">
+                    <p class="section-label">Kindly Reply</p>
+                    <h2 id="rsvp-form-title" class="section-title">Celebrate With Us</h2>
+                    <p>Thank you for celebrating our wedding with us. Please complete the RSVP below. We can't wait to celebrate with you in Russell.</p>
+                </header>
 
-        <h1>Wedding RSVP</h1>
+                <div class="wedding-divider" aria-hidden="true"><span></span><i class="fa-solid fa-diamond"></i><span></span></div>
 
-        <p>
-            Thank you for celebrating our wedding with us.
-            Please submit your RSVP before the requested date.
-        </p>
+                <!-- Replace YOUR_FORM_ID with the ID from your Formspree form dashboard before publishing. -->
+                <form id="rsvp-form" class="rsvp-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+                    <div class="form-field">
+                        <label for="full-name">Full Name <span aria-hidden="true">*</span></label>
+                        <input id="full-name" name="fullName" type="text" autocomplete="name" required aria-describedby="full-name-error" />
+                        <p id="full-name-error" class="field-error" aria-live="polite"></p>
+                    </div>
 
-        <iframe width="640px" height="480px" src="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbRxw-KWdzSk9OoOpV9u2Ii7hUNkFaTEFXMThRM05KNE45VUNUODUzRUVWMi4u&embed=true" frameborder="0" marginwidth="0" marginheight="0" style="border: none; max-width:100%; max-height:100vh" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>
+                    <fieldset class="form-field" aria-describedby="attendance-error">
+                        <legend>Will you be attending our wedding? <span aria-hidden="true">*</span></legend>
+                        <div class="choice-grid">
+                            <label class="choice-card"><input type="radio" name="attendance" value="Joyfully Accepts" required /> <span>Joyfully Accepts</span></label>
+                            <label class="choice-card"><input type="radio" name="attendance" value="Regretfully Declines" required /> <span>Regretfully Declines</span></label>
+                        </div>
+                        <p id="attendance-error" class="field-error" aria-live="polite"></p>
+                    </fieldset>
 
-    </div>
-</section>
+                    <div class="form-field">
+                        <label for="guest-count">How many guests are included in your invitation? <span aria-hidden="true">*</span></label>
+                        <select id="guest-count" name="guestCount" required aria-describedby="guest-count-error">
+                            <option value="">Please select</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                        <p id="guest-count-error" class="field-error" aria-live="polite"></p>
+                    </div>
 
+                    <div id="guest-names-field" class="form-field" hidden>
+                        <label for="guest-names">Names of all guests attending <span aria-hidden="true">*</span></label>
+                        <textarea id="guest-names" name="guestNames" rows="4" aria-describedby="guest-names-help guest-names-error"></textarea>
+                        <p id="guest-names-help" class="field-help">Please include your own name.</p>
+                        <p id="guest-names-error" class="field-error" aria-live="polite"></p>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="dietary">Do you have any dietary requirements, allergies, or food intolerances?</label>
+                        <textarea id="dietary" name="dietaryRequirements" rows="4"></textarea>
+                    </div>
+
+                    <fieldset class="form-field">
+                        <legend>Will you be staying at the Duke of Marlborough Hotel?</legend>
+                        <div class="choice-grid choice-grid-three">
+                            <label class="choice-card"><input type="radio" name="stayingAtDuke" value="Yes" /> <span>Yes</span></label>
+                            <label class="choice-card"><input type="radio" name="stayingAtDuke" value="No" /> <span>No</span></label>
+                            <label class="choice-card"><input type="radio" name="stayingAtDuke" value="Not Sure Yet" /> <span>Not Sure Yet</span></label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="form-field">
+                        <legend>Do you require information about transport or travel to Russell?</legend>
+                        <div class="choice-grid">
+                            <label class="choice-card"><input type="radio" name="travelInformation" value="Yes" /> <span>Yes</span></label>
+                            <label class="choice-card"><input type="radio" name="travelInformation" value="No" /> <span>No</span></label>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-field">
+                        <label for="dance-song">What song would get you on the dance floor?</label>
+                        <input id="dance-song" name="danceSong" type="text" />
+                    </div>
+
+                    <div class="form-field">
+                        <label for="additional-notes">Is there anything else you would like us to know?</label>
+                        <textarea id="additional-notes" name="additionalNotes" rows="4"></textarea>
+                    </div>
+
+                    <input type="hidden" name="_subject" value="New wedding RSVP for Laura and Cathan" />
+                    <div class="form-actions">
+                        <p class="required-note"><span aria-hidden="true">*</span> Required fields</p>
+                        <button id="rsvp-submit" class="btn btn-gold btn-lg" type="submit" disabled>
+                            <span class="submit-label"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Send RSVP</span>
+                            <span class="submit-loading" hidden><i class="fa-solid fa-circle-notch fa-spin" aria-hidden="true"></i> Sending...</span>
+                        </button>
+                        <p id="form-error" class="form-error" role="alert" hidden></p>
+                    </div>
+                </form>
+
+                <div id="rsvp-success" class="rsvp-success" role="status" tabindex="-1" hidden>
+                    <div class="success-icon" aria-hidden="true"><i class="fa-regular fa-heart"></i></div>
+                    <h2>Thank you for your RSVP.</h2>
+                    <p>We are so excited to celebrate our wedding with you at the Duke of Marlborough Hotel on 20 February 2027.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer">
+        <div class="container footer-inner">
+            <p class="footer-names">Laura &amp; Cathan</p>
+            <p class="footer-date">20 February 2027</p>
+            <p class="footer-venue">Duke of Marlborough Hotel, Russell</p>
+            <p class="footer-copy">&copy; 2027 Laura &amp; Cathan. Made with <i class="fa-solid fa-heart" aria-hidden="true"></i> in New Zealand.</p>
+        </div>
+    </footer>
+
+    <script src="script.js?v=20260729-1"></script>
 </body>
 </html>
