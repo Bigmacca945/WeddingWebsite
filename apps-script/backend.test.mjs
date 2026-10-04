@@ -2,12 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
-import { createHash, createHmac, randomUUID } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
 
 const source = readFileSync(new URL('./Code.gs', import.meta.url), 'utf8');
 const headers = ['Guest ID', 'Group ID', 'First Name', 'Last Name', 'Display Name', 'Attendance', 'Dietary Requirements', 'Revision', 'Updated At'];
-// Synthetic fixtures only. These are not invitation codes or spreadsheet IDs.
-const accessCode = 'synthetic-test-access';
+// Synthetic fixtures only. These are not real guests or spreadsheet IDs.
 const guest = (id, group, first, last) => [id, group, first, last, `${first} ${last}`.trim(), '', '', 0, ''];
 const fixtures = () => [
   headers.slice(),
@@ -21,7 +20,6 @@ function harness(options = {}) {
   const state = {
     rows: options.rows || fixtures(),
     properties: options.properties || {
-      RSVP_ACCESS_CODE: accessCode,
       RSVP_SPREADSHEET_ID: 'synthetic-sheet',
       RSVP_TOKEN_SECRET: 'synthetic-test-signing-key-not-for-production'
     },
@@ -107,9 +105,7 @@ function harness(options = {}) {
       flush: () => { if (state.flushError) throw new Error('synthetic flush failure'); }
     },
     Utilities: {
-      DigestAlgorithm: { SHA_256: 'sha256' },
       Charset: { UTF_8: 'utf8' },
-      computeDigest: (algorithm, value) => [...createHash(algorithm).update(value).digest()],
       computeHmacSha256Signature: (value, secret) => [...createHmac('sha256', secret).update(value).digest()],
       base64EncodeWebSafe: bytes => Buffer.from(bytes).toString('base64url'),
       base64DecodeWebSafe: text => [...Buffer.from(text, 'base64url')],
@@ -137,12 +133,12 @@ function harness(options = {}) {
   });
   vm.runInContext(source, context, { filename: 'Code.gs' });
   const lookup = (firstName = 'Example', lastName = 'Alpha') =>
-    context.lookupInvitation({ accessCode, firstName, lastName });
+    context.lookupInvitation({ firstName, lastName });
   const answers = () => [
     { id: 'guest-1', attending: 'yes', dietaryRequirements: 'Synthetic note' },
     { id: 'guest-2', attending: 'no', dietaryRequirements: 'Clear this note' }
   ];
-  const save = (token, responses = answers()) => context.saveInvitation({ accessCode, token, responses });
+  const save = (token, responses = answers()) => context.saveInvitation({ token, responses });
   return { state, context, lookup, save, answers };
 }
 
@@ -169,30 +165,41 @@ test('HTML template permits only a bounded channel and pins the parent origin', 
   }
 });
 
-test('access code is checked before sheet access on lookup and save', () => {
-  const { context, state } = harness();
-  for (const accessCode of ['', 'wrong-code', null, 'x'.repeat(257)]) {
-    assert.equal(context.lookupInvitation({ accessCode, firstName: 'Example' }).status, 'unauthorized');
-    assert.equal(context.saveInvitation({ accessCode, token: 'forged' }).status, 'unauthorized');
+test('lookup and legitimate signed save work without an invitation code', () => {
+  const h = harness();
+  assert.deepEqual(Object.keys(h.state.properties).sort(), ['RSVP_SPREADSHEET_ID', 'RSVP_TOKEN_SECRET']);
+  const invitation = h.context.lookupInvitation({ firstName: 'Example', lastName: 'Alpha' });
+  assert.equal(invitation.status, 'found');
+  assert.equal(h.context.saveInvitation({ token: invitation.token, responses: h.answers() }).status, 'saved');
+  assert.equal(h.state.writes, 1);
+});
+
+test('missing tokens and malformed save requests are rejected before sheet access', () => {
+  const h = harness();
+  for (const request of [undefined, null, false, 42, 'forged', [], {}, { responses: h.answers() },
+    { token: 'forged', responses: h.answers() }]) {
+    assert.equal(h.context.saveInvitation(request).status, 'invalid');
   }
-  assert.equal(context.lookupInvitation(null).status, 'unauthorized');
-  assert.equal(context.saveInvitation(null).status, 'unauthorized');
-  assert.equal(state.opens, 0);
-  assert.equal(state.reads, 0);
+  assert.equal(h.context.lookupInvitation(null).status, 'invalid');
+  assert.equal(h.state.opens, 0);
+  assert.equal(h.state.reads, 0);
+  assert.equal(h.state.writes, 0);
 });
 
 test('missing or invalid configuration fails closed', () => {
-  for (const key of ['RSVP_ACCESS_CODE', 'RSVP_SPREADSHEET_ID', 'RSVP_TOKEN_SECRET']) {
+  for (const key of ['RSVP_SPREADSHEET_ID', 'RSVP_TOKEN_SECRET']) {
     const h = harness();
     delete h.state.properties[key];
     assert.throws(() => h.lookup(), /not configured/);
     assert.throws(() => h.save('invalid'), /not configured/);
     assert.equal(h.state.opens, 0);
   }
-  for (const value of ['short', 'x'.repeat(257)]) {
+  for (const value of ['', 'short', 42, {}]) {
     const h = harness();
-    h.state.properties.RSVP_ACCESS_CODE = value;
+    h.state.properties.RSVP_TOKEN_SECRET = value;
     assert.throws(() => h.lookup(), /not configured/);
+    assert.throws(() => h.save('invalid'), /not configured/);
+    assert.equal(h.state.opens, 0);
   }
 });
 
@@ -203,7 +210,7 @@ test('private initialization uses the bound sheet and preserves the signing secr
   assert.deepEqual(Array.from(h.state.rows[0]), headers);
   assert.equal(h.state.properties.RSVP_SPREADSHEET_ID, 'synthetic-sheet');
   assert.ok(h.state.properties.RSVP_TOKEN_SECRET.length >= 64);
-  assert.equal(h.state.properties.RSVP_ACCESS_CODE, undefined);
+  assert.deepEqual(Object.keys(h.state.properties).sort(), ['RSVP_SPREADSHEET_ID', 'RSVP_TOKEN_SECRET']);
   const secret = h.state.properties.RSVP_TOKEN_SECRET;
   h.context.initializeRsvp_();
   assert.equal(h.state.properties.RSVP_TOKEN_SECRET, secret);
@@ -227,7 +234,7 @@ test('normalizes NFKC, case, and whitespace, including multiword first names', (
   assert.equal(h.state.opens, 3);
   const payload = JSON.parse(Buffer.from(invitation.token.split('.')[0], 'base64url'));
   assert.equal(payload.scope, 'synthetic-sheet');
-  assert.equal(JSON.stringify(payload).includes(accessCode), false);
+  assert.equal(JSON.stringify(payload).includes(h.state.properties.RSVP_TOKEN_SECRET), false);
 });
 
 test('native numeric IDs and blank surnames round-trip as stable public string IDs', () => {
@@ -311,9 +318,9 @@ test('ambiguous names request a surname without exposing candidate names', () =>
 test('invalid names do not read the guest sheet', () => {
   const h = harness();
   for (const firstName of ['', '   ', 42, 'x'.repeat(129)]) {
-    assert.equal(h.context.lookupInvitation({ accessCode, firstName }).status, 'invalid');
+    assert.equal(h.context.lookupInvitation({ firstName }).status, 'invalid');
   }
-  assert.equal(h.context.lookupInvitation({ accessCode, firstName: 'Example', lastName: {} }).status, 'invalid');
+  assert.equal(h.context.lookupInvitation({ firstName: 'Example', lastName: {} }).status, 'invalid');
   assert.equal(h.state.opens, 0);
 });
 
@@ -373,10 +380,12 @@ test('formula-like notes round-trip safely, preserving genuine leading apostroph
   }
 });
 
-test('expired, forged, malformed, and cross-sheet tokens cannot write', () => {
+test('expired, forged, malformed, and cross-sheet tokens cannot read or write', () => {
   const h = harness();
   const token = h.lookup().token;
-  for (const bad of [null, '', 'not-a-token', token + 'x', token.replace(/.$/, token.endsWith('A') ? 'B' : 'A'), 'x'.repeat(2049)]) {
+  const reads = h.state.reads;
+  const opens = h.state.opens;
+  for (const bad of [undefined, null, '', 'not-a-token', token + 'x', token.replace(/.$/, token.endsWith('A') ? 'B' : 'A'), 'x'.repeat(2049)]) {
     assert.equal(h.save(bad).status, 'invalid');
   }
   const pieces = token.split('.');
@@ -388,6 +397,8 @@ test('expired, forged, malformed, and cross-sheet tokens cannot write', () => {
   h.state.properties.RSVP_SPREADSHEET_ID = 'synthetic-sheet';
   h.state.now += 60 * 60 * 1000;
   assert.equal(h.save(token).status, 'expired');
+  assert.equal(h.state.reads, reads);
+  assert.equal(h.state.opens, opens);
   assert.equal(h.state.writes, 0);
 });
 
@@ -425,12 +436,12 @@ test('global enumeration cap and bounded property storage reject further lookups
   assert.equal(bounded.lookup().status, 'rateLimited');
 });
 
-test('global lookup limiter counts incorrect access codes before verification or sheet reads', () => {
+test('global lookup limiter counts incomplete name requests before sheet reads', () => {
   const h = harness();
   for (let index = 0; index < 240; index++) {
     assert.equal(h.context.lookupInvitation({
-      accessCode: `incorrect-synthetic-${index}`, firstName: `Synthetic ${index}`
-    }).status, 'unauthorized');
+      firstName: `Synthetic ${index}`, lastName: null
+    }).status, 'invalid');
   }
   assert.equal(h.lookup().status, 'rateLimited');
   assert.equal(h.state.opens, 0);
@@ -440,13 +451,13 @@ test('global lookup limiter counts incorrect access codes before verification or
   assert.equal(h.lookup().status, 'found');
 });
 
-test('nameless unauthorized attempts are globally limited without requiring signing configuration', () => {
+test('nameless attempts count toward the global limit even with missing configuration', () => {
   const h = harness();
   delete h.state.properties.RSVP_TOKEN_SECRET;
   for (let index = 0; index < 240; index++) {
-    assert.equal(h.context.lookupInvitation({ accessCode: 'wrong-synthetic-code' }).status, 'unauthorized');
+    assert.throws(() => h.context.lookupInvitation({}), /not configured/);
   }
-  assert.equal(h.context.lookupInvitation({ accessCode: 'wrong-synthetic-code' }).status, 'rateLimited');
+  assert.equal(h.context.lookupInvitation({}).status, 'rateLimited');
   assert.equal(h.state.opens, 0);
   assert.equal(Object.keys(h.state.properties).filter(key => key.startsWith('RSVP_RATE_')).length, 1);
 });

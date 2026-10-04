@@ -15,8 +15,7 @@ function doGet(e) {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-// Run in the bound spreadsheet editor once. Configure RSVP_ACCESS_CODE privately
-// in project settings; this function never generates or prints an access code.
+// Run in the bound spreadsheet editor once to configure the sheet and signing secret.
 function initializeRsvp_() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   if (!spreadsheet) throw new Error('Open the bound spreadsheet to initialize RSVP.');
@@ -37,11 +36,10 @@ function initializeRsvp_() {
 function lookupInvitation(request) {
   var firstCandidate = request && typeof request.firstName === 'string' && request.firstName.length <= 128 ?
     normalize_(request.firstName) : '';
-  // Count all attempts before access-code verification, including incorrect codes.
+  // Count all attempts, including unknown or incomplete names.
   var limited = limitLookup_(firstCandidate);
   if (limited) return limited;
-  var config = authenticate_(request);
-  if (!config) return result_('unauthorized', 'Please check your invitation access code.');
+  var config = configuration_();
   if (!request || typeof request.firstName !== 'string' ||
       request.firstName.length > 128 ||
       (request.lastName !== undefined && (typeof request.lastName !== 'string' || request.lastName.length > 128))) {
@@ -70,8 +68,10 @@ function lookupInvitation(request) {
 }
 
 function saveInvitation(request) {
-  var config = authenticate_(request);
-  if (!config) return result_('unauthorized', 'Please check your invitation access code.');
+  var config = configuration_();
+  if (!request || typeof request !== 'object' || Array.isArray(request)) {
+    return result_('invalid', 'Please look up your invitation again.');
+  }
   var verified = verifyToken_(request.token, config);
   if (verified.error) return verified.error;
   if (!Array.isArray(request.responses) || request.responses.length === 0 || request.responses.length > 100) {
@@ -133,24 +133,15 @@ function normalize_(value) {
   return value.normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
-function authenticate_(request) {
+function configuration_() {
   var properties = PropertiesService.getScriptProperties();
-  var access = properties.getProperty('RSVP_ACCESS_CODE');
-  if (typeof access !== 'string' || access.length < 8 || access.length > 256) {
-    throw new Error('RSVP is not configured. Please contact the hosts.');
-  }
-  if (!request || typeof request.accessCode !== 'string' || request.accessCode.length > 256 ||
-      !equalBytes_(digest_(request.accessCode), digest_(access))) return null;
   var spreadsheetId = properties.getProperty('RSVP_SPREADSHEET_ID');
   var secret = properties.getProperty('RSVP_TOKEN_SECRET');
-  if (!spreadsheetId || !secret || secret.length < 32) {
+  if (typeof spreadsheetId !== 'string' || !spreadsheetId ||
+      typeof secret !== 'string' || secret.length < 32) {
     throw new Error('RSVP is not configured. Please contact the hosts.');
   }
   return { spreadsheetId: spreadsheetId, secret: secret };
-}
-
-function digest_(value) {
-  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value, Utilities.Charset.UTF_8);
 }
 
 function equalBytes_(left, right) {

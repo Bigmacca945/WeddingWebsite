@@ -9,6 +9,15 @@ import { join } from 'node:path';
 const root = new URL('..', import.meta.url);
 const embedSource = await readFile(new URL('../rsvp-embed.js', import.meta.url), 'utf8');
 
+test('name-only RSVP UI has no code prompt or code payload', async () => {
+  const form = await readFile(new URL('Rsvp.html', import.meta.url), 'utf8');
+  const page = await readFile(new URL('../rsvp.html', import.meta.url), 'utf8');
+  assert.doesNotMatch(form, /invite-code|codeInput|accessCode|invitation code/i);
+  assert.doesNotMatch(page, /invitation code/i);
+  assert.match(form, /firstName: firstNameInput\.value/);
+  assert.match(form, /token: group\.token/);
+});
+
 function embedFixture(appUrl) {
   const elements = {
     'rsvp-sheet-frame': { hidden: true, style: {} },

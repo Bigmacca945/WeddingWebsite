@@ -7,8 +7,8 @@ owner-only Google Sheet. No Cloudflare deployment or QR-code redirect is used.
 
 ## What guests do
 
-1. Open the existing RSVP page and enter the code printed on their invitation.
-2. Enter their first name. Names are case-insensitive and extra spaces are
+1. Open the existing RSVP page.
+2. Enter their first name. No invitation code is required. Names are case-insensitive and extra spaces are
    ignored. Enter the full first name, including spaces in multi-word names.
 3. If that first name matches more than one invitation, enter a surname.
 4. Confirm the invitation group, then choose attending/not attending for each
@@ -27,14 +27,12 @@ An "open in a new tab" link is provided if a browser blocks the embedded form.
   share it with all guests, or give the Apps Script project public editor access.
 - Deploy the web app **executing as you**, with access **Anyone**. This allows
   guests without Google accounts to use the form; it does not share the Sheet.
-- The existing invitation code is checked on the server. Store it only in
-  Apps Script properties, never in `rsvp-config.js`, Git, or the guest Sheet.
-- This remains trust-based. A person with the code who knows another guest's
+- This is name-only, trust-based access. Anyone who knows another guest's
   name can read that group's RSVP and dietary notes and update its responses.
   Only collect notes that guests are comfortable sharing in this arrangement.
-- The previously browser-visible invitation code is not a high-security secret.
-  Server-side code checks and lookup limits reduce casual access but do not
-  provide individual guest identity verification.
+- Lookup limits reduce casual enumeration but do not provide individual guest
+  identity verification. Signed group tokens restrict edits to the looked-up
+  invitation; knowing a name is enough to obtain that group's token.
 - GitHub Pages wedding HTML itself is publicly downloadable. This setup protects
   the guest list and RSVP records, not all wedding details. A browser-only code
   screen is not real protection for static HTML.
@@ -57,17 +55,16 @@ An "open in a new tab" link is provided if a browser blocks the embedded form.
    registers the bound Sheet and creates a signing secret. Remove this temporary
    wrapper and save again **before deploying**; the private initializer ends in
    `_` so it is not exposed to website visitors or the editor's function picker.
-4. In **Project Settings > Script properties**, set **RSVP_ACCESS_CODE** to the
-   existing code printed on the invitations. Enter it directly there, not in
-   chat or source code. Retain the generated **RSVP_SPREADSHEET_ID** and
-   **RSVP_TOKEN_SECRET** properties.
+4. In **Project Settings > Script properties**, retain the generated
+   **RSVP_SPREADSHEET_ID** and **RSVP_TOKEN_SECRET** properties. No invitation-code
+   property is needed; any old **RSVP_ACCESS_CODE** property can be deleted.
 5. Select **Deploy > New deployment > Web app**. Execute as **Me**, allow
    **Anyone**, and authorize when prompted. Copy the deployed URL ending in
    `/exec`, not the editor-only `/dev` test URL.
 6. Set `appUrl` in `rsvp-config.js` to that URL. This URL is public configuration,
    not a credential.
 7. Confirm the Sheet is **Restricted**, and check the web app in a signed-out
-   browser. Verify the code and unique/ambiguous name flows, saving, reopening,
+   browser. Verify the unique/ambiguous name flows, saving, reopening,
    and updating a group. Do not test using another guest's personal dietary data.
 
 If you update Apps Script code later, edit the existing deployment to use a

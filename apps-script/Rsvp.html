@@ -47,11 +47,6 @@
     <h2 id="lookup-title">Find Your Invitation</h2>
     <form id="lookup-form">
       <div>
-        <label for="invite-code">Invitation code</label>
-        <input id="invite-code" type="password" inputmode="numeric" autocomplete="off" minlength="8" maxlength="256" required aria-describedby="code-help" />
-        <p id="code-help" class="help">Use the code printed on your invitation. It is checked privately with your RSVP.</p>
-      </div>
-      <div>
         <label for="first-name">Your first name</label>
         <input id="first-name" type="text" autocomplete="given-name" maxlength="80" required aria-describedby="name-help" />
         <p id="name-help" class="help">Use your name as it appears on the invitation, including any spaces in a multi-word first name.</p>
@@ -91,7 +86,7 @@
   <section id="success-view" class="success" aria-labelledby="success-title" hidden>
     <h2 id="success-title" tabindex="-1">Your Group RSVP Is Saved</h2>
     <p>Thank you! We've saved a response for everyone on your invitation.</p>
-    <p class="help">To review or update your responses later, find your invitation again using your name and invitation code.</p>
+    <p class="help">To review or update your responses later, find your invitation again using your name.</p>
     <button class="secondary search-again" type="button">Review or Update RSVP</button>
   </section>
   <noscript><p class="error">Please enable JavaScript to look up and save your RSVP.</p></noscript>
@@ -103,11 +98,9 @@
   const message = document.getElementById('message');
   const lookupForm = document.getElementById('lookup-form');
   const responseForm = document.getElementById('response-form');
-  const codeInput = document.getElementById('invite-code');
   const firstNameInput = document.getElementById('first-name');
   const surnameInput = document.getElementById('last-name');
   let group = null;
-  let accessCode = '';
   let busy = false;
 
   function reportHeight() {
@@ -158,11 +151,9 @@
     event.preventDefault();
     if (busy || !lookupForm.reportValidity()) return;
     const request = {
-      accessCode: codeInput.value.trim(),
       firstName: firstNameInput.value,
       lastName: document.getElementById('surname-field').hidden ? '' : surnameInput.value
     };
-    accessCode = request.accessCode;
     message.hidden = true;
     setBusy(true);
     google.script.run.withSuccessHandler(result => {
@@ -175,7 +166,7 @@
         return;
       }
       if (result?.status !== 'found') {
-        showError(result?.message || "We couldn't find your invitation. Please check the code and name.");
+        showError(result?.message || "We couldn't find your invitation. Please check your name.");
         return;
       }
       if (!Array.isArray(result.guests) || !result.guests.length || typeof result.token !== 'string') {
@@ -246,7 +237,6 @@
     event.preventDefault();
     if (busy || !group || !responseForm.reportValidity()) return;
     const request = {
-      accessCode,
       token: group.token,
       responses: group.guests.map(guest => ({
         id: guest.id,
@@ -263,7 +253,7 @@
         document.getElementById('guest-fields').replaceChildren();
         document.getElementById('group-list').replaceChildren();
         showView('success');
-      } else if (['expired', 'conflict', 'unauthorized'].includes(result?.status)) {
+      } else if (['expired', 'conflict'].includes(result?.status)) {
         group = null;
         showView('lookup');
         showError(result.message || 'Please find your invitation again before making changes.');
