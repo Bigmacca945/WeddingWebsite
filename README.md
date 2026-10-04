@@ -1,73 +1,118 @@
 # WeddingWebsite
 
-The wedding design is plain HTML, CSS and JavaScript. The protected deployment
-uses a Cloudflare Pages advanced-mode Worker; GitHub is not required.
+The wedding website stays on GitHub Pages at
+https://bigmacca945.github.io/WeddingWebsite/. A Google Apps Script form embedded
+in `rsvp.html` privately looks up invitations and saves responses to an
+owner-only Google Sheet. No Cloudflare deployment or QR-code redirect is used.
 
-## Build and test
+## What guests do
 
-Requires Node.js 24 or later. No npm packages are required.
+1. Open the existing RSVP page and enter the code printed on their invitation.
+2. Enter their first name. Names are case-insensitive and extra spaces are
+   ignored. Enter the full first name, including spaces in multi-word names.
+3. If that first name matches more than one invitation, enter a surname.
+4. Confirm the invitation group, then choose attending/not attending for each
+   person and optionally enter dietary requirements.
+5. Return to the same page to review or update the saved responses.
+
+Only the matching group is returned. There is no directory/autocomplete endpoint
+and no guest list in the public website, repository, or Pages deployment.
+The RSVP form uses Google's supported `google.script.run` transport, rather than
+unreliable cross-origin fetch requests or write-only `no-cors` submissions.
+An "open in a new tab" link is provided if a browser blocks the embedded form.
+
+## Privacy and limits
+
+- Keep the Sheet's sharing setting **Restricted**. Do not publish it to the web,
+  share it with all guests, or give the Apps Script project public editor access.
+- Deploy the web app **executing as you**, with access **Anyone**. This allows
+  guests without Google accounts to use the form; it does not share the Sheet.
+- The existing invitation code is checked on the server. Store it only in
+  Apps Script properties, never in `rsvp-config.js`, Git, or the guest Sheet.
+- This remains trust-based. A person with the code who knows another guest's
+  name can read that group's RSVP and dietary notes and update its responses.
+  Only collect notes that guests are comfortable sharing in this arrangement.
+- The previously browser-visible invitation code is not a high-security secret.
+  Server-side code checks and lookup limits reduce casual access but do not
+  provide individual guest identity verification.
+- GitHub Pages wedding HTML itself is publicly downloadable. This setup protects
+  the guest list and RSVP records, not all wedding details. A browser-only code
+  screen is not real protection for static HTML.
+- Google Apps Script and Sheets have quotas. If unavailable, the form reports a
+  failure instead of displaying a fake successful RSVP.
+- The deadline is displayed, not automatically enforced.
+
+## Google Sheet and Apps Script setup
+
+1. Create a private Google Sheet for the wedding RSVPs. Copy the contents of the
+   gitignored local `private\guests.tsv` into cell A1 of its first tab, and rename
+   that tab **Guests**. The file contains the corrected 48 guests/27 groups.
+   Never upload this private file to GitHub or a public Pages folder.
+2. Select **Extensions > Apps Script**. Replace the default code with
+   `apps-script\Code.gs`. Add an HTML file named **Rsvp** and paste
+   `apps-script\Rsvp.html` into it.
+3. For initial setup only, append
+   `function setupWeddingRsvp() { initializeRsvp_(); }` to Code.gs. Save and run
+   **setupWeddingRsvp**, approving the required Google permissions. This
+   registers the bound Sheet and creates a signing secret. Remove this temporary
+   wrapper and save again **before deploying**; the private initializer ends in
+   `_` so it is not exposed to website visitors or the editor's function picker.
+4. In **Project Settings > Script properties**, set **RSVP_ACCESS_CODE** to the
+   existing code printed on the invitations. Enter it directly there, not in
+   chat or source code. Retain the generated **RSVP_SPREADSHEET_ID** and
+   **RSVP_TOKEN_SECRET** properties.
+5. Select **Deploy > New deployment > Web app**. Execute as **Me**, allow
+   **Anyone**, and authorize when prompted. Copy the deployed URL ending in
+   `/exec`, not the editor-only `/dev` test URL.
+6. Set `appUrl` in `rsvp-config.js` to that URL. This URL is public configuration,
+   not a credential.
+7. Confirm the Sheet is **Restricted**, and check the web app in a signed-out
+   browser. Verify the code and unique/ambiguous name flows, saving, reopening,
+   and updating a group. Do not test using another guest's personal dietary data.
+
+If you update Apps Script code later, edit the existing deployment to use a
+**new version**. Simply saving the script does not update the deployed `/exec`
+version. Retain the deployment URL so existing website links continue working.
+
+### Guest Sheet columns
+
+The **Guests** tab must have these exact columns in order:
+
+`Guest ID | Group ID | First Name | Last Name | Display Name | Attendance |
+Dietary Requirements | Revision | Updated At`
+
+Leave Attendance blank until a guest replies; saved values are `yes` or `no`.
+Initial Revision is 0. Keep rows for each group contiguous. IDs, group IDs and
+revisions are internal values; do not edit them casually. Do not reorder headers.
+
+Responses replace the relevant group's existing rows rather than adding
+duplicates. Declining a guest clears their dietary note. Server-side locking and
+revision tokens prevent an old form overwriting newer group responses. Forms
+expire after an hour; guests then look up the invitation again.
+
+You can privately filter Attendance and dietary notes in Sheets. Do not publish
+the results or export them to a public repository. No guest-facing admin/export
+endpoint is provided.
+
+## Publishing to the existing GitHub Pages address
+
+Node.js 24 or later is required; there are no npm dependencies.
 
 ```powershell
 npm test
 npm run build
 ```
 
-Upload **only `deploy`**, not this repository, to Cloudflare Pages using direct
-upload. The build embeds wedding content in `_worker.js`, which Cloudflare
-executes on the server. Public static assets contain only a generic unavailable
-page. If the Function is absent, misconfigured, or bypassed after a quota limit,
-private wedding content is not present in the static asset store.
+The build creates **pages-deploy** containing only six public website files.
+It refuses to build until a valid Apps Script deployment URL is configured.
+Never publish the repository root: that would risk exposing private/supporting
+files if they were accidentally tracked.
 
-## Cloudflare setup (required before guests can sign in)
+In the GitHub repository's **Settings > Pages**, choose **GitHub Actions** as
+the source. The workflow in `.github\workflows\pages.yml` runs tests, builds the
+allow-listed files, and publishes them after a push to `main`, or a manual run.
+This preserves `/WeddingWebsite/`; relative local asset links work under that
+project path. Commit/push only after reviewing the diff and privacy settings.
 
-1. Create a Pages direct-upload project, using `cathanandlaura` if available.
-2. Create a D1 database and execute `security\schema.sql` in its console.
-3. In the Pages project's Settings > Bindings, bind that database as `AUTH_DB`.
-4. Add two **encrypted secrets**, not plaintext variables:
-   - `WEDDING_PASSWORD`: a new unique guest passphrase, 16-256 characters.
-   - `SESSION_SECRET`: an independently generated random secret of at least
-     32 characters (use a password manager; do not share this with guests).
-5. Apply bindings and secrets to production. Apply them to preview only if
-   private preview access is required; otherwise previews intentionally return 503.
-6. Upload the built `deploy` folder and redeploy after changing bindings/secrets.
-7. If the account offers a Functions failure-mode setting, choose **Fail closed**.
-8. Before sharing the link, confirm unauthenticated requests to `/`, `/rsvp.html`,
-   `/script.js`, `/styles.css` and deployment-preview URLs cannot retrieve wedding
-   content. Then sign in, check both pages, and sign out.
-
-Enter actual secrets directly into Cloudflare. Never put them in source control,
-chat, deployment archives, screenshots, or notes. Do not reuse the old browser
-invite code: it was visible in the previous JavaScript and Git history.
-
-## Protection and limits
-
-- Every wedding page and local asset requires a signed, origin-bound session.
-- The cookie is Secure, HttpOnly, SameSite=Lax and expires after 24 hours.
-- Changing either secret invalidates existing sessions on the new deployment.
-- Login allows at most 10 submissions per IP address per 15 minutes, including
-  successful submissions. Guests on the same network share that allowance.
-- D1 uses atomic counters, keyed with an HMAC rather than storing raw IPs.
-  Expired counters are removed on the next login attempt; no passwords are logged.
-- Missing secrets/database and authentication errors deny access, never expose assets.
-- Same-origin form submissions, no-store caching headers and noindex directives
-  are applied. Noindex alone is not access control.
-- Signing out clears that browser's cookie. A previously stolen copy remains
-  valid until expiry or secret rotation; this is a shared-password site, not
-  individual user accounts.
-- Guests can still share the password, downloaded content, or screenshots.
-- Remote fonts, images and Spotify remain external dependencies. Future RSVP
-  submissions need a separate protected backend; the current RSVP page is closed.
-- The free Cloudflare plan has request/database quotas. Exhaustion can make the
-  site unavailable; it must not make it public.
-
-**Existing public copies are unaffected.** If GitHub Pages or another host still
-serves an earlier copy, disable that deployment separately before treating the
-wedding details as private. A public Git repository also exposes source content.
-Do not publish the new source HTML using GitHub Pages or another static-only host;
-the browser-only gate has been removed in favour of the server gate.
-
-## Updates
-
-Edit the four source website files, run the commands above, then upload `deploy`
-as a new deployment. Do not manually upload the source pages as public assets.
-Do not commit generated deployment output or secrets.
+The older `security` directory is retained as existing repository history/code,
+but its Worker and D1 configuration are not used by the Google Sheets approach.

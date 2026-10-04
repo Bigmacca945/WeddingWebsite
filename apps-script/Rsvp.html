@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base target="_top" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&amp;family=Lato:wght@400;700&amp;display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --white: #fafafa;
+      --black: #0d0d0d;
+      --navy: #1a2744;
+      --champagne: #c9a96e;
+      --grey: #6b6b6b;
+      --error: #9c3838;
+      --font-heading: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Lato', Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--white); color: var(--black); font: 16px/1.6 var(--font-body); }
+    main { padding: 12px; max-width: 760px; margin: auto; }
+    h2, legend { font-family: var(--font-heading); color: var(--navy); }
+    h2 { margin: 0 0 16px; font-size: 30px; font-weight: 400; }
+    p { margin: 0 0 16px; }
+    form, .guest-fields { display: grid; gap: 20px; }
+    label { display: block; margin-bottom: 6px; color: var(--navy); font-weight: 700; }
+    input, select, textarea { width: 100%; font: inherit; padding: 12px; border: 1px solid var(--champagne); border-radius: 4px; background: var(--white); color: var(--black); }
+    textarea { min-height: 100px; resize: vertical; }
+    input:focus, select:focus, textarea:focus, button:focus-visible { outline: 3px solid var(--champagne); outline-offset: 2px; }
+    button { display: block; width: 100%; border: 1px solid var(--champagne); border-radius: 4px; padding: 14px 16px; font: 700 15px var(--font-body); cursor: pointer; color: var(--navy); background: var(--champagne); }
+    button.secondary { background: var(--white); border-color: var(--navy); }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    .actions { display: grid; gap: 12px; }
+    .help { font-size: 14px; color: var(--grey); }
+    .error { color: var(--error); font-weight: 700; }
+    .guest { min-width: 0; margin: 0; padding: 16px; border: 1px solid var(--champagne); border-radius: 4px; }
+    .guest legend { padding: 0 6px; font-size: 25px; }
+    .group-list { color: var(--navy); padding-left: 24px; }
+    .success { text-align: center; padding: 24px 0; }
+  </style>
+</head>
+<body>
+<main>
+  <p id="message" class="error" role="alert" tabindex="-1" hidden></p>
+  <section id="lookup-view" aria-labelledby="lookup-title">
+    <h2 id="lookup-title">Find Your Invitation</h2>
+    <form id="lookup-form">
+      <div>
+        <label for="invite-code">Invitation code</label>
+        <input id="invite-code" type="password" inputmode="numeric" autocomplete="off" minlength="8" maxlength="256" required aria-describedby="code-help" />
+        <p id="code-help" class="help">Use the code printed on your invitation. It is checked privately with your RSVP.</p>
+      </div>
+      <div>
+        <label for="first-name">Your first name</label>
+        <input id="first-name" type="text" autocomplete="given-name" maxlength="80" required aria-describedby="name-help" />
+        <p id="name-help" class="help">Use your name as it appears on the invitation, including any spaces in a multi-word first name.</p>
+      </div>
+      <div id="surname-field" hidden>
+        <label for="last-name">Your surname</label>
+        <input id="last-name" type="text" autocomplete="family-name" maxlength="80" />
+      </div>
+      <button type="submit">Find My Invitation</button>
+    </form>
+    <p class="help">Can't find your invitation? Please contact Cathan or Laura.</p>
+  </section>
+
+  <section id="confirm-view" aria-labelledby="confirm-title" hidden>
+    <h2 id="confirm-title">Is This Your Group?</h2>
+    <p>You can reply on behalf of everyone listed below.</p>
+    <ul id="group-list" class="group-list"></ul>
+    <div class="actions">
+      <button id="confirm-group" type="button">Yes, This Is My Group</button>
+      <button class="secondary search-again" type="button">No, Search Again</button>
+    </div>
+  </section>
+
+  <section id="response-view" aria-labelledby="response-title" hidden>
+    <h2 id="response-title">Reply for Your Group</h2>
+    <p id="response-help"></p>
+    <form id="response-form">
+      <div id="guest-fields" class="guest-fields"></div>
+      <p class="help">Dietary notes can be seen by anyone able to look up this invitation group. Please only include information each guest is happy to share.</p>
+      <div class="actions">
+        <button id="save-rsvp" type="submit">Save Group RSVP</button>
+        <button class="secondary search-again" type="button">Search Again</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="success-view" class="success" aria-labelledby="success-title" hidden>
+    <h2 id="success-title" tabindex="-1">Your Group RSVP Is Saved</h2>
+    <p>Thank you! We've saved a response for everyone on your invitation.</p>
+    <p class="help">To review or update your responses later, find your invitation again using your name and invitation code.</p>
+    <button class="secondary search-again" type="button">Review or Update RSVP</button>
+  </section>
+  <noscript><p class="error">Please enable JavaScript to look up and save your RSVP.</p></noscript>
+</main>
+<script>
+  const EMBED_CHANNEL = <?!= JSON.stringify(embedChannel) ?>;
+  const PARENT_ORIGIN = <?!= JSON.stringify(parentOrigin) ?>;
+  const views = ['lookup', 'confirm', 'response', 'success'];
+  const message = document.getElementById('message');
+  const lookupForm = document.getElementById('lookup-form');
+  const responseForm = document.getElementById('response-form');
+  const codeInput = document.getElementById('invite-code');
+  const firstNameInput = document.getElementById('first-name');
+  const surnameInput = document.getElementById('last-name');
+  let group = null;
+  let accessCode = '';
+  let busy = false;
+
+  function reportHeight() {
+    if (EMBED_CHANNEL) window.top.postMessage({
+      type: 'wedding-rsvp-height',
+      channel: EMBED_CHANNEL,
+      height: Math.ceil(document.body.getBoundingClientRect().height) + 32
+    }, PARENT_ORIGIN);
+  }
+
+  function showView(name) {
+    views.forEach(view => { document.getElementById(`${view}-view`).hidden = view !== name; });
+    message.hidden = true;
+    const heading = document.querySelector(`#${name}-view h2`);
+    heading.tabIndex = -1;
+    heading.focus();
+    reportHeight();
+  }
+
+  function showError(text) {
+    message.textContent = text;
+    message.hidden = false;
+    message.focus();
+    reportHeight();
+  }
+
+  function setBusy(value) {
+    busy = value;
+    document.querySelectorAll('input, select, textarea, button').forEach(control => { control.disabled = value; });
+    lookupForm.setAttribute('aria-busy', String(value));
+    responseForm.setAttribute('aria-busy', String(value));
+    if (!value) document.querySelectorAll('.guest').forEach(updateDietary);
+  }
+
+  function element(tag, text, className) {
+    const node = document.createElement(tag);
+    if (text !== undefined) node.textContent = text;
+    if (className) node.className = className;
+    return node;
+  }
+
+  function failure() {
+    setBusy(false);
+    showError('We could not connect to the RSVP service. Your response is not confirmed. Please try again or contact Cathan or Laura.');
+  }
+
+  lookupForm.addEventListener('submit', event => {
+    event.preventDefault();
+    if (busy || !lookupForm.reportValidity()) return;
+    const request = {
+      accessCode: codeInput.value.trim(),
+      firstName: firstNameInput.value,
+      lastName: document.getElementById('surname-field').hidden ? '' : surnameInput.value
+    };
+    accessCode = request.accessCode;
+    message.hidden = true;
+    setBusy(true);
+    google.script.run.withSuccessHandler(result => {
+      setBusy(false);
+      if (result?.status === 'needsSurname') {
+        document.getElementById('surname-field').hidden = false;
+        surnameInput.required = true;
+        showError('More than one invitation matches this first name. Please enter your surname.');
+        surnameInput.focus();
+        return;
+      }
+      if (result?.status !== 'found') {
+        showError(result?.message || "We couldn't find your invitation. Please check the code and name.");
+        return;
+      }
+      if (!Array.isArray(result.guests) || !result.guests.length || typeof result.token !== 'string') {
+        failure();
+        return;
+      }
+      group = result;
+      const list = document.getElementById('group-list');
+      list.replaceChildren(...group.guests.map(guest => element('li', guest.name)));
+      showView('confirm');
+    }).withFailureHandler(failure).lookupInvitation(request);
+  });
+
+  firstNameInput.addEventListener('input', () => {
+    document.getElementById('surname-field').hidden = true;
+    surnameInput.required = false;
+    surnameInput.value = '';
+  });
+
+  function updateDietary(fieldset) {
+    fieldset.querySelector('textarea').disabled = busy || fieldset.querySelector('select').value === 'no';
+  }
+
+  document.getElementById('confirm-group').addEventListener('click', () => {
+    if (!group || busy) return;
+    const fields = document.getElementById('guest-fields');
+    fields.replaceChildren();
+    group.guests.forEach(guest => {
+      const fieldset = element('fieldset', undefined, 'guest');
+      fieldset.append(element('legend', guest.name));
+      const attendanceLabel = element('label', `Will ${guest.name} attend?`);
+      attendanceLabel.htmlFor = `attendance-${guest.id}`;
+      const select = element('select');
+      select.id = attendanceLabel.htmlFor;
+      select.required = true;
+      [['', 'Please select'], ['yes', 'Attending'], ['no', 'Not attending']].forEach(([value, label]) => {
+        const option = element('option', label);
+        option.value = value;
+        select.append(option);
+      });
+      select.value = guest.attending || '';
+      const dietaryLabel = element('label', 'Dietary requirements (optional)');
+      dietaryLabel.htmlFor = `dietary-${guest.id}`;
+      const textarea = element('textarea');
+      textarea.id = dietaryLabel.htmlFor;
+      textarea.maxLength = 500;
+      textarea.value = guest.dietaryRequirements || '';
+      const help = element('p', 'Include any allergies. Leave blank if none; ignored for guests not attending.', 'help');
+      help.id = `dietary-help-${guest.id}`;
+      textarea.setAttribute('aria-describedby', help.id);
+      const attendanceField = element('div');
+      attendanceField.append(attendanceLabel, select);
+      const dietaryField = element('div');
+      dietaryField.append(dietaryLabel, textarea, help);
+      fieldset.append(attendanceField, dietaryField);
+      select.addEventListener('change', () => updateDietary(fieldset));
+      updateDietary(fieldset);
+      fields.append(fieldset);
+    });
+    document.getElementById('response-help').textContent = group.hasResponse
+      ? 'Your saved responses are shown below. You can update them.'
+      : 'Please choose attending or not attending for every person on your invitation.';
+    document.getElementById('save-rsvp').textContent = group.hasResponse ? 'Update Group RSVP' : 'Save Group RSVP';
+    showView('response');
+  });
+
+  responseForm.addEventListener('submit', event => {
+    event.preventDefault();
+    if (busy || !group || !responseForm.reportValidity()) return;
+    const request = {
+      accessCode,
+      token: group.token,
+      responses: group.guests.map(guest => ({
+        id: guest.id,
+        attending: document.getElementById(`attendance-${guest.id}`).value,
+        dietaryRequirements: document.getElementById(`dietary-${guest.id}`).value
+      }))
+    };
+    message.hidden = true;
+    setBusy(true);
+    google.script.run.withSuccessHandler(result => {
+      setBusy(false);
+      if (result?.status === 'saved') {
+        group = null;
+        document.getElementById('guest-fields').replaceChildren();
+        document.getElementById('group-list').replaceChildren();
+        showView('success');
+      } else if (['expired', 'conflict', 'unauthorized'].includes(result?.status)) {
+        group = null;
+        showView('lookup');
+        showError(result.message || 'Please find your invitation again before making changes.');
+      } else {
+        showError(result?.message || 'Your RSVP was not saved. Please check every response and try again.');
+      }
+    }).withFailureHandler(failure).saveInvitation(request);
+  });
+
+  document.querySelectorAll('.search-again').forEach(button => {
+    button.addEventListener('click', () => {
+      if (busy) return;
+      group = null;
+      document.getElementById('guest-fields').replaceChildren();
+      document.getElementById('group-list').replaceChildren();
+      showView('lookup');
+      firstNameInput.focus();
+    });
+  });
+
+  new ResizeObserver(reportHeight).observe(document.body);
+  window.addEventListener('load', reportHeight);
+</script>
+</body>
+</html>

@@ -1426,6 +1426,19 @@ ul {
   gap: 1.7rem;
 }
 
+.rsvp-sheet-frame {
+  display: block;
+  width: 100%;
+  height: 700px;
+  border: 0;
+  background: var(--white);
+}
+
+.rsvp-return-note {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
 .form-field {
   min-width: 0;
   border: 0;

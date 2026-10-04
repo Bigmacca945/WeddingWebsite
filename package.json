@@ -4,6 +4,6 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "build": "node security/build.mjs"
+    "build": "node apps-script/build-pages.mjs"
   }
 }

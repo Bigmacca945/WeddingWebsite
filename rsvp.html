@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;family=Lato:wght@300;400;700&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="styles.css?v=20260729-1" />
+    <link rel="stylesheet" href="styles.css?v=20261005-1" />
 </head>
 <body class="rsvp-page">
     <nav id="navbar" aria-label="Main navigation">
@@ -48,17 +48,17 @@
             <div class="container rsvp-form-wrap fade-in">
                 <div class="rsvp-intro">
                     <p class="section-label">Kindly Reply</p>
-                    <h2 id="rsvp-form-title" class="section-title">RSVPs Aren't Open Yet</h2>
-                    <p>RSVP will open once invites are mailed.</p>
+                    <h2 id="rsvp-form-title" class="section-title">Find Your Invitation</h2>
+                    <p>Please reply by 20 December 2026. Use your invitation code and first name to find everyone on your invitation.</p>
                 </div>
 
                 <div class="wedding-divider" aria-hidden="true"><span></span><i class="fa-solid fa-diamond"></i><span></span></div>
 
-                <div class="rsvp-success" role="status">
-                    <div class="success-icon" aria-hidden="true"><i class="fa-regular fa-envelope"></i></div>
-                    <p>We can't wait to celebrate with you in Russell.</p>
-                    <a href="index.html#hero" class="btn btn-outline">Back to Wedding Website</a>
-                </div>
+                <p id="rsvp-connection-status" class="field-help" role="status">The RSVP form is not connected yet. Please contact Cathan or Laura if you need to reply now.</p>
+                <iframe id="rsvp-sheet-frame" class="rsvp-sheet-frame" title="Private invitation lookup and group RSVP form" referrerpolicy="no-referrer" hidden></iframe>
+                <p class="field-help rsvp-return-note"><a id="rsvp-open-form" target="_blank" rel="noopener noreferrer" hidden>Open the RSVP form in a new tab</a></p>
+                <p class="field-help rsvp-return-note">Already replied? Find your invitation again to review or update your group's responses.</p>
+                <noscript><p class="field-help">Please enable JavaScript to use the private RSVP form.</p></noscript>
             </div>
         </section>
     </main>
@@ -68,11 +68,12 @@
             <p class="footer-names">Cathan &amp; Laura</p>
             <p class="footer-date">20 February 2027</p>
             <p class="footer-venue">Duke of Marlborough Hotel, Russell</p>
-            <form action="/logout" method="post"><button class="footer-signout" type="submit">Sign out</button></form>
             <p class="footer-copy">&copy; 2027 Laura &amp; Cathan. Made with <i class="fa-solid fa-heart" aria-hidden="true"></i> in New Zealand.</p>
         </div>
     </footer>
 
     <script src="script.js?v=20260729-1"></script>
+    <script src="rsvp-config.js?v=20261005-1"></script>
+    <script src="rsvp-embed.js?v=20261005-1"></script>
 </body>
 </html>

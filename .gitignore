@@ -4,3 +4,5 @@ wedding-protected.zip
 .env*
 node_modules/
 .wrangler/
+private/
+pages-deploy/
