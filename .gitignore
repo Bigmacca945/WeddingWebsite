@@ -1,0 +1,6 @@
+deploy/
+wedding-protected.zip
+.dev.vars*
+.env*
+node_modules/
+.wrangler/

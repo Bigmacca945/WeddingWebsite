@@ -51,8 +51,14 @@ body {
   overflow-x: hidden;
 }
 
-.invite-locked body {
-  overflow: hidden;
+.footer-signout {
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+  padding: 0.5rem;
 }
 
 img {
